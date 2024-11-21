@@ -18,28 +18,22 @@ Assign memory locations starting at 16
 
 class Entry {
   public:
-    Entry(std::string symbol, int value);
+    // Constructor with input symbol as key to the input value
+    Entry(const std::string& symbol, int value);
 
+    // Destructor
     ~Entry();
-
-    inline void setSymbol(std::string symbol) {symbol_ = symbol;}
 
     inline void setValue(int value) {value_ = value;}
 
-    inline void setNext(Entry* next) {next_ = next;}
+    inline const std::string getSymbol() const {return symbol_;}
 
-    inline std::string getSymbol() {return symbol_;}
-
-    inline int getSymbol() {return value_;}
-
-    inline int getNext() {return next_;}
+    inline int getValue() const {return value_;}
 
   private:
     std::string symbol_; // Stores the symbol
 
     int value_; // Stores the symbol value
-
-    Entry* next_; // Stores pointer to next entry
 };
 
 #endif
