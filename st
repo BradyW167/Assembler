@@ -13,17 +13,27 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +24 driver.cpp
-badd +1 Symbol_Table.h
-badd +9 Symbol_Table.cpp
+badd +17 driver.cpp
+badd +49 Symbol_Table.h
+badd +78 Symbol_Table.cpp
 badd +5 makefile
+badd +25 Entry.h
+badd +5 Entry.cpp
 argglobal
 %argdel
 $argadd driver.cpp
 tabnew +setlocal\ bufhidden=wipe
 tabnew +setlocal\ bufhidden=wipe
+tabnew +setlocal\ bufhidden=wipe
 tabrewind
 edit driver.cpp
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
 argglobal
 setlocal fdm=expr
 setlocal fde=v:lua.require'lazyvim.util'.ui.foldexpr()
@@ -35,7 +45,7 @@ setlocal fdn=20
 setlocal fen
 7
 normal! zo
-let s:l = 17 - ((10 * winheight(0) + 18) / 36)
+let s:l = 17 - ((16 * winheight(0) + 33) / 67)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
@@ -59,8 +69,7 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
-exe 'vert 1resize ' . ((&columns * 78 + 78) / 156)
-exe 'vert 2resize ' . ((&columns * 77 + 78) / 156)
+wincmd =
 argglobal
 setlocal fdm=expr
 setlocal fde=v:lua.require'lazyvim.util'.ui.foldexpr()
@@ -70,12 +79,22 @@ setlocal fdl=99
 setlocal fml=1
 setlocal fdn=20
 setlocal fen
-let s:l = 9 - ((8 * winheight(0) + 18) / 36)
+6
+normal! zo
+30
+normal! zo
+49
+normal! zo
+57
+normal! zo
+59
+normal! zo
+let s:l = 78 - ((27 * winheight(0) + 33) / 67)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 9
-normal! 0
+keepjumps 78
+normal! 049|
 wincmd w
 argglobal
 if bufexists(fnamemodify("Symbol_Table.h", ":p")) | buffer Symbol_Table.h | else | edit Symbol_Table.h | endif
@@ -91,24 +110,18 @@ setlocal fdl=99
 setlocal fml=1
 setlocal fdn=20
 setlocal fen
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+1
+normal! zo
+let s:l = 23 - ((22 * winheight(0) + 33) / 67)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 02|
+keepjumps 23
+normal! 039|
 wincmd w
-exe 'vert 1resize ' . ((&columns * 78 + 78) / 156)
-exe 'vert 2resize ' . ((&columns * 77 + 78) / 156)
+wincmd =
 tabnext
 edit makefile
-wincmd t
-let s:save_winminheight = &winminheight
-let s:save_winminwidth = &winminwidth
-set winminheight=0
-set winheight=1
-set winminwidth=0
-set winwidth=1
 argglobal
 setlocal fdm=expr
 setlocal fde=v:lua.require'lazyvim.util'.ui.foldexpr()
@@ -118,13 +131,73 @@ setlocal fdl=99
 setlocal fml=1
 setlocal fdn=20
 setlocal fen
-let s:l = 5 - ((4 * winheight(0) + 18) / 36)
+let s:l = 5 - ((4 * winheight(0) + 33) / 67)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 5
 normal! 0
-tabnext 3
+tabnext
+edit Entry.cpp
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+wincmd _ | wincmd |
+vsplit
+1wincmd h
+wincmd w
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
+wincmd =
+argglobal
+balt driver.cpp
+setlocal fdm=expr
+setlocal fde=v:lua.require'lazyvim.util'.ui.foldexpr()
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=99
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+let s:l = 6 - ((5 * winheight(0) + 33) / 67)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 6
+normal! 0
+wincmd w
+argglobal
+if bufexists(fnamemodify("Entry.h", ":p")) | buffer Entry.h | else | edit Entry.h | endif
+if &buftype ==# 'terminal'
+  silent file Entry.h
+endif
+balt makefile
+setlocal fdm=expr
+setlocal fde=v:lua.require'lazyvim.util'.ui.foldexpr()
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=99
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+1
+normal! zo
+let s:l = 20 - ((16 * winheight(0) + 33) / 67)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 20
+normal! 09|
+wincmd w
+wincmd =
+tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
 endif

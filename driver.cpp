@@ -21,7 +21,8 @@ int main() {
   // Loop through each line in file, storing it in line
   while (std::getline(file, line)) {
     // Remove all whitespace from line
-    line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
+    l
+    ine.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
 
     // If line begins with "//"..
     if(line.size() >= 2 && line[0] == '/' && line[1] == '/') {
