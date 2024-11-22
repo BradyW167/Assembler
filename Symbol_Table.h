@@ -33,8 +33,14 @@ class Symbol_Table {
     // Calculate position in table for an entry using its key
     size_t hashFunction(const std::string& key);
 
+    // Insert symbol into table and generate value from symbolAddressCount_
+    void insert(const std::string& key);
+
     // Insert entry into table
     void insert(const std::string& key, int value);
+
+    // Check if given key already exists in table
+    bool duplicateCheck(const std::string& key, size_t bucketIndex);
 
     // Delete entry using key from table
     void deleteEntry(const std::string& key);
@@ -49,6 +55,8 @@ class Symbol_Table {
     std::vector<std::list<Entry>> table_; // Vector of Entry lists as a hash table
 
     size_t entryCount_; // Number of entries
+
+    size_t symbolAddressCount_; // Number of unique symbols in the table
 };
 
 #endif

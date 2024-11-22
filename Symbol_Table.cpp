@@ -1,6 +1,6 @@
 #include "Symbol_Table.h"
 
-Symbol_Table::Symbol_Table(size_t capacity) : table_(capacity), entryCount_(0){}
+Symbol_Table::Symbol_Table(size_t capacity) : table_(capacity), entryCount_(0), symbolAddressCount_(0) {}
 
 Symbol_Table::~Symbol_Table() {}
 
@@ -12,7 +12,7 @@ size_t Symbol_Table::hashFunction(const std::string& key) {
 
   size_t factor = 31; // Stores the value of our prime number raised to x
 
-  for (size_t i = 0; i < key.size(); i++) {
+  for(size_t i = 0; i < key.size(); i++) {
       // Get bit value for character at index of key string
       size_t charBitValue = static_cast<size_t>(key[i]);
       // sum = sum + (ascii value of char * (primeNumber ^ x))...
@@ -29,55 +29,87 @@ size_t Symbol_Table::hashFunction(const std::string& key) {
   return bucketIndex; // Return the index value
 }
 
-void Symbol_Table::insert(const std::string& key, int value) {
+void Symbol_Table::insert(const std::string& key) {
   size_t bucketIndex = hashFunction(key); // Get bucket index for given key
 
-  std::cout << "Inserting key-value pair: '" << key << "' : " << value << " at index " << bucketIndex << std::endl;
+  if(duplicateCheck(key, bucketIndex)) {return;} // Check if given key is a duplicate and return if so
+
+  int value = symbolAddressCount_ + 15; // Set symbol addresses to some value over 15
+
+  symbolAddressCount_++; // Increment symbol address count
+
+  std::cout << "\nInserting key-value pair ('" << key << "' : " << value << ") at index " << bucketIndex << std::endl;
 
   Entry newEntry(key, value); // Create new entry with given key and value
 
   table_[bucketIndex].push_back(newEntry); // Insert entry into list at index
+}
 
-  std::cout << "Inserted key-value pair: '" << table_[bucketIndex].front().getSymbol() << "' : " << table_[bucketIndex].front().getValue() << " at index " << bucketIndex << std::endl;
+void Symbol_Table::insert(const std::string& key, int value) {
+  size_t bucketIndex = hashFunction(key); // Get bucket index for given key
+
+  if(duplicateCheck(key, bucketIndex)) {return;} // Check if given key is a duplicate and return if so
+
+  std::cout << "\nInserting key-value pair ('" << key << "' : " << value << ") at index " << bucketIndex << std::endl;
+
+  Entry newEntry(key, value); // Create new entry with given key and value
+
+  table_[bucketIndex].push_back(newEntry); // Insert entry into list at index
+}
+
+bool Symbol_Table::duplicateCheck(const std::string& key, size_t bucketIndex) {
+  // Loop through table entries
+  for (const Entry& existingEntry : table_[bucketIndex]) {
+    // If entry matches given key...
+    if (existingEntry.getSymbol() == key) {
+        return true;
+    }
+  }
+  return false; // Return false if matching key not found
 }
 
 void Symbol_Table::deleteEntry(const std::string& key) {
   int bucketIndex = hashFunction(key); // Get bucket index for given key
 
-  auto& list = table_[bucketIndex];  // Reference to the list at given index
+  auto& list = table_[bucketIndex]; // Get reference to the list at bucketIndex
+
+  // If list is empty...
+  if(list.empty()) {
+    std::cout << "List empty at index " << bucketIndex << ", Entry with key " << key << " could not be deleted" << std::endl;
+    return; // Skip to next list
+  }
 
   // Iterate through each entry in the list
   for (auto it = list.begin(); it != list.end(); ++it) {
       // If the iterator's current key matches the given key...
       if (it->getSymbol() == key) {
-          list.erase(it);  // Remove the entry from the list
-          std::cout << "Deleted: (" << key << ", " << it->getValue() << ")\n";
-          return;  // Exit once the entry is deleted
+          std::cout << "Deleted: ('" << key << "', " << it->getValue() << ")" << std::endl;
+
+          list.erase(it); // Remove the entry from the list
+          return; // Return after the entry is deleted
       }
   }
 
-  std::cout << "Key not found: " << key << "\n";  // If key was not found
+  std::cout << "Key '" << key << "' not found";  // If key was not found
 }
 
 int Symbol_Table::search(const std::string& key) {
-  int bucketIndex = hashFunction(key); // Get bucket index for given key
+  size_t bucketIndex = hashFunction(key); // Get bucket index for given key
 
-  std::cout << "Search for key '" << key << "' at index " << bucketIndex << std::endl;
-  auto& list = table_[bucketIndex];  // Reference to the list at given index
+  std::cout << "\nSearching for key '" << key << "' at index " << bucketIndex << std::endl;
+  auto& list = table_[bucketIndex]; // Get reference to the list at the bucket index
 
-  std::cout << "Entries at bucket index " << bucketIndex << ": ";
-  for (const auto& entry : list) {
-    std::cout << entry.getSymbol() << " -> ";
+  // Return -1 if list is empty, key not found
+  if(list.empty()) {
+    std::cout << "List empty" << std::endl;
+    return -1;
   }
 
-std::cout << std::endl;
-
-  // Iterate through each entry in the list
-  for (auto it = list.begin(); it != list.end(); ++it) {
-      std::cout << "Key: " << it->getSymbol() << " -> ";
+  // Loop through each entry in the list
+  for(const auto& entry : list) {
       // If the iterator's current key matches the given key...
-      if (it->getSymbol() == key) {
-          return it->getValue();  // Return value matching given key
+      if (entry.getSymbol() == key) {
+          return entry.getValue();  // Return value matching given key
       }
   }
 
@@ -86,28 +118,24 @@ std::cout << std::endl;
 }
 
 void Symbol_Table::printTable() {
+  std::cout << "\nPrinting hash table..." << std::endl;
   // Loop through each index in the table
-  for (size_t i = 0; i < table_.size(); ++i) {
-    // Print the index value
-    std::cout << "Index " << i << ": ";
+  for(size_t i = 0; i < table_.size(); ++i) {
+    std::cout << "Index " << i << ": "; // Print the index value
 
-    // Check if the list is empty
-    if (table_[i].empty()) {
-      std::cout << "Empty list" << std::endl;
+    auto& list = table_[i]; // Get reference to the list at index i
+
+    // If list is empty...
+    if(list.empty()) {
+      std::cout << "List empty" << std::endl;
       continue; // Skip to next list
-    } else {
-        // Loop through each entry in the list at index i in table_
-        for (auto it = table_[i].begin(); it != table_[i].end(); ++it) {
-            // Print the key and its value
-            std::cout << "(" << it->getSymbol() << ", " << std::to_string(it->getValue()) << ")";
-            // Print "->" if it's not the last element
-            if (std::next(it) != table_[i].end()) {
-                std::cout << " -> ";
-            }
-        }
     }
 
-    // Print nullptr at the end of each list (just for formatting)
-    std::cout << " -> nullptr" << std::endl;
+    // Loop through each entry in the list
+    for(const auto& entry : list) {
+      // Print key value pair of entry
+      std::cout << "(" << entry.getSymbol() << ", " << std::to_string(entry.getValue()) << ") ";
+    }
+    std::cout << std::endl;
   }
 }
