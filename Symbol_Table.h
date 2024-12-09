@@ -30,13 +30,16 @@ class Symbol_Table {
     // Destructor
     ~Symbol_Table();
 
+    // Build table with default values
+    void buildTable();
+
     // Calculate position in table for an entry using its key
     size_t hashFunction(const std::string& key);
 
     // Insert symbol into table and generate value from symbolAddressCount_
     void insert(const std::string& key);
 
-    // Insert entry into table
+    // Insert entry into table with input value
     void insert(const std::string& key, int value);
 
     // Check if given key already exists in table
