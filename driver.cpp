@@ -129,14 +129,13 @@ void readFileToTable(Symbol_Table& table, std::string fileName) {
 
   // Loop through each line in file and store it in line
   while (std::getline(file, line)) {
+    // Remove all whitespace from line
+    line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
 
     // If line is empty...
     if (line.empty()) {
       continue; // Skip to next line (do not increase linecount)
     }
-
-    // Remove all whitespace from line
-    line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
 
     // If line begins with "//"...
     if (line.size() >= 2 && line[0] == '/' && line[1] == '/') {
@@ -156,6 +155,20 @@ void readFileToTable(Symbol_Table& table, std::string fileName) {
       std::string label = line.substr(1, line.size() - 2); // Store the text inside the parentheses
       table.insert(label, static_cast<int>(linecount)); // Insert label into table with value as the line it refers to
       continue; // Skip to next line (do not increase linecount)
+    }
+
+   // If line begins with an @ symbol...
+  if (line.front() == '@' ) {
+      std::string symbol = line.substr(1); // Store the string following the @ symbol
+
+      // If symbol is a number (begins with a digit)...
+      if (std::isdigit(symbol[0])) {}
+      // If symbol is a symbol (begins with a lowercase letter)
+      else if(std::islower(symbol[0])) {
+        table.insert(symbol);
+      }
+      // Else symbol is a label
+      else {}
     }
 
     linecount++; // Increment line counter
@@ -184,14 +197,13 @@ void readFileToBinary(Symbol_Table& table, std::string fileName) {
 
   // Loop through each line in file and store it in line
   while (std::getline(file, line)) {
+    // Remove all whitespace from line
+    line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
 
     // If line is empty...
     if (line.empty()) {
       continue; // Skip to next line (do not increase linecount)
     }
-
-    // Remove all whitespace from line
-    line.erase(std::remove_if(line.begin(), line.end(), ::isspace), line.end());
 
     // If line begins with "//"...
     if (line.size() >= 2 && line[0] == '/' && line[1] == '/') {
@@ -293,6 +305,8 @@ int main () {
   readFileToTable(assemblyTable, inputFile); // Input text file lines into hash table for symbols
 
   readFileToBinary(assemblyTable, inputFile); // Generate binary output file
+
+  assemblyTable.printTable();
 
   return 0;
 }

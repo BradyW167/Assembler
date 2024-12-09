@@ -1,23 +1,74 @@
-@2
-
-M=0 // Store product in M[2]
+// KEYBOARD > 0 ? Black : White
 (LOOP)
-@0
-D=M
-@END
+    // Get keyboard value
+    @KBD
+    D=M
+	
+    // Jump to on if it's more than 0
+    @ON
+    D;JGT
+	
+    // Jump to off otherwise
+    @OFF
+    0;JMP
+	
+// Turn the screen on and loop
+(ON)
+    // Set the draw value to -1 for black
+    @R0
+    M=-1
+	
+    // Draw screen
+    @DRAW
+    0;JMP
+	
+// Turn the screen off and loop
+(OFF)
+    // Set the draw value to 0 for white
+    @R0
+    M=0
+	
+    // Draw screen
+    @DRAW
+    0;JMP
+	
+// Set the screen to R0 and loop
+(DRAW)
+    // R1 is set to 8192 and decremented to get the memory register
+    // for every pixel
+    @8191
+    D=A
+    @R1
+    M=D
+	
+    // Loop through each pixel on screen and set it to R0
+    (NEXT)
+        // Calculate the position
+        @R1
+        D=M
+        @pos
+        M=D
+        @SCREEN
+        D=A
+        @pos
+        M=D+M
 
+        // Draw value stored in R0 at pos
+        @R0
+        D=M
+        @pos
+        A=M
+        M=D
 
-D;JLE // If M[0] is 0 go to end
-@1
-D=M
-//Go to address 2
-@2
-M=D+M // Add M[1] to M[2]
-@0
-M=M-1 // Subtract 1 from M[0] for each add
-@LOOP
-0;JMP
-// End label
-(END)
-@END
-0;JMP
+        // Decrement the counter
+        @R1
+        D=M-1
+        M=D
+
+        // Next pixel if the counter >= 0
+        @NEXT
+        D;JGE
+		
+    // Loop back around.
+    @LOOP
+    0;JMP

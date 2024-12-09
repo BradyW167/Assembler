@@ -58,11 +58,15 @@ size_t Symbol_Table::hashFunction(const std::string& key) {
 }
 
 void Symbol_Table::insert(const std::string& key) {
+  std::cout << "\nInserting " << key << std::endl;
   size_t bucketIndex = hashFunction(key); // Get bucket index for given key
 
-  if(duplicateCheck(key, bucketIndex)) {return;} // Check if given key is a duplicate and return if so
+  if(duplicateCheck(key, bucketIndex)) {
+    std::cout << "\nKey \"" << key << "\" is a duplicate" << std::endl;
+    return; // Check if given key is a duplicate and return if so
+  }
 
-  int value = symbolAddressCount_ + 15; // Set symbol addresses to some value over 15
+  int value = symbolAddressCount_ + 16; // Set symbol addresses to some value over 15
 
   symbolAddressCount_++; // Increment symbol address count
 
